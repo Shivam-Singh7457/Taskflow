@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, CheckSquare, Clock, LogOut } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Clock, LogOut, X } from 'lucide-react';
 
 export default function Sidebar({ filter, setFilter, stats, isOpen, onClose }) {
   const { user, logout } = useAuth();
