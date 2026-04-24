@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import TaskCard from '../components/TaskCard';
 import TaskModal from '../components/TaskModal';
 import PomodoroTimer from '../components/PomodoroTimer';
-import { Plus, Maximize, X } from 'lucide-react';
+import { Plus, Maximize, X, Menu } from 'lucide-react';
 import CompletionModal from '../components/CompletionModal';
 
 export default function DashboardPage() {
@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
   const [taskToComplete, setTaskToComplete] = useState(null);
@@ -148,13 +149,19 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex bg-peach-50">
-      <Sidebar filter={filter} setFilter={setFilter} stats={stats} />
+      <Sidebar filter={filter} setFilter={setFilter} stats={stats} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="flex-1 ml-[240px] flex flex-col h-screen overflow-hidden">
-        <header className="h-[72px] shrink-0 bg-cream-50 border-b border-cream-200 flex items-center justify-between px-8">
-          <div className="flex items-center gap-6 flex-1">
-            <h2 className="text-xl font-bold text-ink shrink-0">{filterTitles[filter]}</h2>
-            <div className="relative max-w-md w-full">
+      <main className="flex-1 lg:ml-[240px] flex flex-col h-screen overflow-hidden">
+        <header className="h-[72px] shrink-0 bg-cream-50 border-b border-cream-200 flex items-center justify-between px-4 lg:px-8 gap-4">
+          <div className="flex items-center gap-3 lg:gap-6 flex-1 overflow-hidden">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-2 hover:bg-peach-100 rounded-lg text-ink-mid"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className="text-lg lg:text-xl font-bold text-ink truncate">{filterTitles[filter]}</h2>
+            <div className="relative max-w-md w-full hidden sm:block">
               <input 
                 type="text"
                 placeholder="Search tasks..."
@@ -173,29 +180,45 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2 lg:gap-4 shrink-0">
             <button 
               onClick={() => setFocusMode(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-peach-400 text-peach-600 font-medium rounded-lg hover:bg-peach-100 transition-colors"
+              className="flex items-center gap-2 px-3 lg:px-4 py-2 border border-peach-400 text-peach-600 font-medium rounded-lg hover:bg-peach-100 transition-colors text-sm"
             >
-              <Maximize className="w-4 h-4" /> Focus Stream
+              <Maximize className="w-4 h-4" /> 
+              <span className="hidden md:inline">Focus Stream</span>
             </button>
             <button 
               onClick={openNewTask}
-              className="flex items-center gap-2 px-4 py-2 bg-peach-400 text-peach-50 font-medium rounded-lg hover:bg-peach-600 transition-colors"
+              className="flex items-center gap-2 px-3 lg:px-4 py-2 bg-peach-400 text-peach-50 font-medium rounded-lg hover:bg-peach-600 transition-colors text-sm"
             >
-              <Plus className="w-4 h-4" /> New Task
+              <Plus className="w-4 h-4" /> 
+              <span className="hidden md:inline">New Task</span>
             </button>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        {/* Mobile Search - only visible on very small screens where the header search is hidden */}
+        <div className="sm:hidden px-4 pt-4">
+          <div className="relative w-full">
+            <input 
+              type="text"
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-cream-100 border border-cream-200 rounded-full py-2 px-10 text-sm focus:outline-none focus:border-peach-400 transition-colors"
+            />
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           {filteredTasks.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-ink-mid">
               <p>No tasks found in this view.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4 items-start content-start">
+            <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4 items-start content-start">
               {filteredTasks.map(task => (
                 <TaskCard 
                   key={task.id} 
