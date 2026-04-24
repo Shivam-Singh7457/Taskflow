@@ -13,6 +13,20 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Frontend validation
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength || !hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecial) {
+      setError('Password must meet all strength requirements.');
+      return;
+    }
+
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/signup`, { email, password });
       login(res.data);
@@ -59,6 +73,17 @@ export default function SignupPage() {
               onChange={e => setPassword(e.target.value)}
               className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors"
             />
+            <div className="mt-2 space-y-1">
+              <p className="text-[10px] text-ink-mid/60 flex items-center gap-1">
+                {password.length >= 8 ? '✅' : '○'} 8+ characters
+              </p>
+              <p className="text-[10px] text-ink-mid/60 flex items-center gap-1">
+                {(/[A-Z]/.test(password) && /[a-z]/.test(password)) ? '✅' : '○'} Upper & Lowercase
+              </p>
+              <p className="text-[10px] text-ink-mid/60 flex items-center gap-1">
+                {(/[0-9]/.test(password) && /[!@#$%^&*()]/.test(password)) ? '✅' : '○'} Number & Symbol
+              </p>
+            </div>
           </div>
           <button type="submit" className="w-full bg-peach-400 hover:bg-peach-600 text-peach-50 font-medium py-3 rounded-lg transition-colors mt-2">
             Sign Up
