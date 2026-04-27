@@ -214,8 +214,26 @@ export default function DashboardPage() {
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           {filteredTasks.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-ink-mid">
-              <p>No tasks found in this view.</p>
+            <div className="h-full flex flex-col items-center justify-center text-center px-4 animate-fade-in-up">
+              <div className="text-7xl mb-6 transform hover:scale-110 transition-transform cursor-default">
+                {filter === 'completed' ? '✨' : '🎯'}
+              </div>
+              <h3 className="text-2xl font-bold text-ink mb-3">
+                {filter === 'completed' ? 'All caught up!' : 'Ready to conquer?'}
+              </h3>
+              <p className="max-w-md text-ink-mid italic text-lg leading-relaxed">
+                "{filter === 'completed' 
+                  ? "The best way to predict the future is to create it." 
+                  : filter === 'pending'
+                    ? "Focus on being productive instead of busy."
+                    : "Your mind is for having ideas, not holding them."}"
+              </p>
+              <button 
+                onClick={openNewTask}
+                className="mt-8 px-6 py-3 bg-peach-100 text-peach-600 font-semibold rounded-xl hover:bg-peach-200 transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-5 h-5" /> Start something new
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4 items-start content-start">
