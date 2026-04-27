@@ -8,17 +8,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/login`, { email, password });
       login(res.data);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+      setIsLoading(false);
     }
   };
 
@@ -45,9 +49,10 @@ export default function LoginPage() {
             <input
               type="email"
               required
+              disabled={isLoading}
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors"
+              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors disabled:opacity-50"
             />
           </div>
           <div>
@@ -55,13 +60,23 @@ export default function LoginPage() {
             <input
               type="password"
               required
+              disabled={isLoading}
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors"
+              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors disabled:opacity-50"
             />
           </div>
-          <button type="submit" className="w-full bg-peach-400 hover:bg-peach-600 text-peach-50 font-medium py-3 rounded-lg transition-colors mt-2">
-            Sign In
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className="w-full bg-peach-400 hover:bg-peach-600 disabled:bg-peach-300 text-peach-50 font-medium py-3 rounded-lg transition-colors mt-2 flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-peach-50 border-t-transparent rounded-full animate-spin"></span>
+                Hang on setting up environment
+              </>
+            ) : 'Sign In'}
           </button>
         </form>
 

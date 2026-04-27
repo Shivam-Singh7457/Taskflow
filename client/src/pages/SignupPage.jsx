@@ -8,12 +8,14 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     // Frontend validation
     const minLength = 8;
@@ -24,6 +26,7 @@ export default function SignupPage() {
 
     if (password.length < minLength || !hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecial) {
       setError('Password must meet all strength requirements.');
+      setIsLoading(false);
       return;
     }
 
@@ -33,6 +36,7 @@ export default function SignupPage() {
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
+      setIsLoading(false);
     }
   };
 
@@ -59,9 +63,10 @@ export default function SignupPage() {
             <input
               type="email"
               required
+              disabled={isLoading}
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors"
+              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors disabled:opacity-50"
             />
           </div>
           <div>
@@ -69,9 +74,10 @@ export default function SignupPage() {
             <input
               type="password"
               required
+              disabled={isLoading}
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors"
+              className="w-full bg-cream-100 border border-cream-200 rounded-lg px-4 py-3 text-ink focus:border-peach-400 focus:outline-none transition-colors disabled:opacity-50"
             />
             <div className="mt-2 space-y-1">
               <p className="text-[10px] text-ink-mid/60 flex items-center gap-1">
@@ -85,8 +91,17 @@ export default function SignupPage() {
               </p>
             </div>
           </div>
-          <button type="submit" className="w-full bg-peach-400 hover:bg-peach-600 text-peach-50 font-medium py-3 rounded-lg transition-colors mt-2">
-            Sign Up
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className="w-full bg-peach-400 hover:bg-peach-600 disabled:bg-peach-300 text-peach-50 font-medium py-3 rounded-lg transition-colors mt-2 flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-peach-50 border-t-transparent rounded-full animate-spin"></span>
+                Hang on setting up environment
+              </>
+            ) : 'Sign Up'}
           </button>
         </form>
 
